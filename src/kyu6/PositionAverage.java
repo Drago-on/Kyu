@@ -1,0 +1,59 @@
+package kyu6;
+
+import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+
+public class PositionAverage {
+    public static double posAverage(String s) {
+        String[] subStrings = s.split(", ");
+        if (subStrings.length <= 1) return 0;
+        System.out.println(Arrays.toString(subStrings));
+        double totalOccurrences = 0;
+
+        double total = 0;
+
+        for (int i = 0; i < subStrings.length; i++) {
+            for (int j = i + 1; j < subStrings.length; j++) {
+                totalOccurrences += getOccurrencesBetweenTwoSubstrings(subStrings[i], subStrings[j]);
+                total += subStrings[j].length();
+            }
+        }
+
+
+        return totalOccurrences / total * 100;
+    }
+
+    public static int getOccurrencesBetweenTwoSubstrings(String first, String second) {
+        if (first.length() != second.length()) return 0;
+        int occurrences = 0;
+
+        for (int i = 0; i < first.length(); i++) {
+            if (first.charAt(i) == second.charAt(i)) occurrences++;
+        }
+        return occurrences;
+    }
+
+
+    private static void assertFuzzy(String s, double exp) {
+        System.out.println("Testing " + s);
+        boolean inrange;
+        double merr = 1e-9;
+        double actual = PositionAverage.posAverage(s);
+        inrange = Math.abs(actual - exp) <= merr;
+        if (inrange == false) {
+            System.out.println("Expected mean must be near " + exp + ", got " + actual);
+        }
+        assertEquals(true, inrange);
+    }
+
+    @Test
+    public void test() {
+        assertFuzzy("466960, 069060, 494940, 060069, 060090, 640009, 496464, 606900, 004000, 944096", 26.6666666667);
+        assertFuzzy("444996, 699990, 666690, 096904, 600644, 640646, 606469, 409694, 666094, 606490", 29.2592592593);
+        assertFuzzy("4444444, 4444444, 4444444, 4444444, 4444444, 4444444, 4444444, 4444444", 100);
+        assertFuzzy("0, 0, 0, 0, 0, 0, 0, 0", 100);
+    }
+}
